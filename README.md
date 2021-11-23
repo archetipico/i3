@@ -20,6 +20,6 @@ OS: <code>Debian 11 (bullseye)</code>
 </ul>
 <h2>External projects used</h2>
 <ul>
-    <li><a href="https://github.com/chubin/wttr.in">wttr.in</a></li>
+    <li><a href="https://github.com/chubin/wttr.in">wttr.in</a></li>
 </ul>
 
