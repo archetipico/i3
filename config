@@ -1,0 +1,168 @@
+### VARIABLES ###
+
+# set $mod as WinKey
+set $mod Mod4
+
+# set two workspaces
+set $ws1 "1"
+set $ws2 "2"
+
+# used in PulseAudio controls
+set $refresh_i3status killall -SIGUSR1 i3status
+
+# used for system control
+set $mode_system System (l) lock, (e) logout, (r) reboot, (s) shutdown
+
+
+
+### APPLICATIONS ###
+
+# open a terminal
+bindsym $mod+Return exec i3-sensible-terminal
+
+# start network manager
+exec --no-startup-id nm-applet
+
+# trying bluetooth connection
+exec --no-startup-id bluetoothctl devices | cut --delimiter=' ' -f 2 | xargs -I {} bluetoothctl connect {}
+
+# manage PulseAudio
+bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +5% && $refresh_i3status
+bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -5% && $refresh_i3status
+bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
+bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
+
+# screenshot
+bindsym Print exec gnome-screenshot -i
+
+# run firefox
+bindsym $mod+Ctrl+f exec firefox
+
+# run spotify
+bindsym $mod+Ctrl+s exec spotify
+
+# run telegram
+bindsym $mod+Ctrl+t exec flatpak run org.telegram.desktop
+
+
+
+### FOCUS ###
+
+# change focus
+bindsym $mod+Left focus left
+bindsym $mod+Down focus down
+bindsym $mod+Up focus up
+bindsym $mod+Right focus right
+
+# move focused window
+bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+Down move down
+bindsym $mod+Shift+Up move up
+bindsym $mod+Shift+Right move right
+
+
+
+### i3 BAR ###
+
+# font used
+font pango:monospace 10
+
+# bar and status
+bar {
+        status_command exec ~/.config/i3/i3status/bar.sh
+}
+
+
+
+### i3 SYSTEM ###
+
+# xss-lock inhibits lock and will use i3lock to lock the screen before suspend
+exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
+
+# lock / logout / reboot / shutdown
+mode "$mode_system" {
+	bindsym l exec --no-startup-id i3lock --show-failed-attempts --ignore-empty-password --image=/usr/share/backgrounds/gnome/Icetwigs_lock.png, mode "default"
+	bindsym e exec --no-startup-id i3-msg exit, mode "default"
+	bindsym r exec --no-startup-id systemctl reboot, mode "default"
+	bindsym s exec --no-startup-id systemctl poweroff -i, mode "default"
+
+	bindsym Return mode "default"
+	bindsym Escape mode "default"
+}
+bindsym $mod+Shift+e mode "$mode_system"
+
+# restart i3 inplace
+bindsym $mod+Shift+r restart
+
+# background wallpaper
+exec --no-startup-id feh --no-fehbg --bg-fill '/usr/share/backgrounds/gnome/Icetwigs.jpg'
+
+
+
+### LAUNCHER ###
+
+# launcher for desktop applications
+bindsym $mod+d exec --no-startup-id i3-dmenu-desktop
+
+# launcher for more general applications
+bindsym $mod+Shift+d exec --no-startup-id dmenu_run
+
+
+
+### SPLIT ###
+
+# split horizontally
+bindsym $mod+h split h
+
+# split vertically
+bindsym $mod+v split v
+
+
+
+### VIEW ###
+
+# fullscreen mode for the focused container
+bindsym $mod+f fullscreen toggle
+
+# change containers layout
+bindsym $mod+t layout tabbed
+bindsym $mod+s layout toggle split
+
+# change focus between tiling / floating windows
+bindsym $mod+space focus mode_toggle
+
+# toggle tiling / floating
+bindsym $mod+Shift+space floating toggle
+
+
+
+### WINDOW ###
+
+# window compositor
+exec --no-startup-id compton --config ~/.config/i3/compton.conf
+
+# no border
+for_window [class="^.*"] border pixel 0
+
+# which windows automatically float
+for_window [window_role="pop-up"] floating enable
+for_window [window_role="task_dialog"] floating enable
+for_window [title="statusbar_popup"] floating enable, fullscreen toggle
+
+# disable focus on hover
+focus_follows_mouse no
+
+# kill focused window
+bindsym $mod+Shift+q kill
+
+
+
+### WORKSPACE ###
+
+# switch to workspace
+bindsym $mod+1 workspace number $ws1
+bindsym $mod+2 workspace number $ws2
+
+# move focused container to workspace
+bindsym $mod+Shift+1 move container to workspace number $ws1
+bindsym $mod+Shift+2 move container to workspace number $ws2
