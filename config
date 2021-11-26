@@ -36,7 +36,7 @@ bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOU
 bindsym Print exec gnome-screenshot -i
 
 # run firefox
-bindsym $mod+Ctrl+f exec firefox
+bindsym $mod+Ctrl+f exec ~/Documents/Firefox/firefox
 
 # run spotify
 bindsym $mod+Ctrl+s exec spotify
@@ -64,11 +64,9 @@ bindsym $mod+Shift+Right move right
 
 ### i3 BAR ###
 
-# font used
-font pango:monospace 10
-
 # bar and status
 bar {
+        font pango:3270Medium Nerd Font Mono 12
         status_command exec ~/.config/i3/i3status/bar.sh
 }
 
