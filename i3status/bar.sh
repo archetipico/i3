@@ -160,7 +160,7 @@ function get_weather () {
         echo $REQ > ~/.config/i3/i3status/weather.log
     fi
 
-    if [[ $COUNT_WEATHER -ge 3600 ]]; then
+    if [[ $COUNT_WEATHER -ge 600 ]]; then
         COUNT_WEATHER=0
     fi
 
