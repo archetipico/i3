@@ -2,6 +2,7 @@
 OS: <code>Debian 11 (bullseye)</code> 
 <h2>Dependencies</h2>
 <ul>
+    <li><a href="https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/3270/Medium/complete">3270 Medium Nerd Font Mono</a></li>
     <li>alsamixer</li>
     <li>compton</li>
     <li>curl</li>
