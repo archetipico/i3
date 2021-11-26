@@ -11,33 +11,42 @@ RED="#FF0000"
 WHITE="#FFFFFF"
 YELLOW="#FFFF00"
 
-# clean spotify.log at startup
-echo "" > ~/.config/i3/i3status/spotify.log
-# dbus-monitor to monitor Spotify status
-exec dbus-monitor | grep --line-buffered -A2 -P 'xesam:title|xesam:artist' | grep --line-buffered -oP 'string "[^"]+"' | grep --line-buffered -Pv 'xesam:title |xesam:artist' > ~/.config/i3/i3status/spotify.log &
+# clean audio_activity.log at startup
+echo "" > ~/.config/i3/i3status/audio_activity.log
+# dbus-monitor to monitor audio activity status
+exec dbus-monitor | grep --line-buffered -A2 -P 'xesam:title|xesam:artist' | grep --line-buffered -oP 'string "[^\n]+"' | grep --line-buffered -Pv 'xesam:title |xesam:artist' > ~/.config/i3/i3status/audio_activity.log &
 
-# check if Spotify is running
-function check_spotify () {
-    if [[ $(ps -A | grep -c 'spotify') -ge 1 ]]; then
-        get_spotify
+# check if Spotify or Firefox are running
+function check_spotifox () {
+    if [[ $(ps -A | grep -c 'spotify') -ge 1 || $(ps -A | grep -c 'GeckoMain') -ge 1 ]]; then
+        get_spotifox
     fi
 }
 
-# monitoring Spotify
-function get_spotify () {
-    echo -n "{\"name\":\"id_spotify\",\"full_text\":"
+# monitoring Spotify and Firefox for audio notifications
+function get_spotifox () {
+    echo -n "{\"name\":\"id_spotifox\",\"full_text\":"
 
     # get a snapshot of my log
-    timeout 0.1s tail -f ~/.config/i3/i3status/spotify.log > ~/.config/i3/i3status/temp_spotify.log
-    local ARTIST=$(cat ~/.config/i3/i3status/temp_spotify.log | cut -d '"' -f2 | awk 'NR==2')
-    local SONG=$(cat ~/.config/i3/i3status/temp_spotify.log | cut -d '"' -f2 | tail -1)
+    timeout 0.1s tail -f ~/.config/i3/i3status/audio_activity.log > ~/.config/i3/i3status/temp_audio_activity.log
+    cat ~/.config/i3/i3status/temp_audio_activity.log | cut -d '"' -f2- | rev | cut -c2- | rev | tail -3 > ~/.config/i3/i3status/res_audio_activity.log
 
-    echo -n "\"$ARTIST ~ $SONG\","
-    echo -n "\"color\":\"$PINK\"},"
+    # if the first line is `xesam:title` then it's from Firefox, else from Spotify
+    local ARTIST=$(cat ~/.config/i3/i3status/res_audio_activity.log | head -1 | awk '{gsub(/"/,"");}1')
+    local SONG=$(cat ~/.config/i3/i3status/res_audio_activity.log | tail -1 | awk '{gsub(/"/,"");}1')
+    if [[ $ARTIST == 'xesam:title' ]]; then
+        local VIDEO=$(cat ~/.config/i3/i3status/res_audio_activity.log | awk 'NR==2')
+        echo -n "\"$(echo $VIDEO | awk '{gsub(/"/,"");}1')\","
+        echo -n "\"color\":\"$PINK\"},"
+    else
+        echo -n "\"$ARTIST ~ $SONG\","
+        echo -n "\"color\":\"$PINK\"},"
+
+    fi
 }
 
 # - if bluetooth is powered then:
-#   - if a paired device exists and is connected, display it
+#   - if a paired device exist and is connected, display it
 #   - else no device is connected
 # - else bluetooth is off
 function get_blue () {
@@ -155,7 +164,7 @@ function get_weather () {
         COUNT_WEATHER=0
     fi
 
-    RES=$(cat ~/.config/i3/i3status/.weather_log)
+    RES=$(cat ~/.config/i3/i3status/weather.log)
     let COUNT_WEATHER=COUNT_WEATHER+1
 
     echo -n "\"$RES\","
@@ -184,7 +193,7 @@ echo '[]'
 # every function is repeated every second
 ( while : ; do
     echo -n ",["
-    check_spotify
+    check_spotifox
     get_blue
     get_vol
     get_cpu
@@ -195,13 +204,18 @@ echo '[]'
     echo -n "{\"name\":\"id_time\",\"full_text\":\"$(date "+%H:%M")\",\"color\":\"$WHITE\"}"
     echo -n "]"
 
-    sleep 1
+    # There's a 0.1s timeout in the spotifox function, so technically it is 1s
+    sleep 0.9
 done ) &
 
 # diffrent use cases for when you click on the widgets
 while read LINE; do
-    if [[ $LINE == *"name"*"id_spotify"* ]]; then
-        wmctrl -x -R "Spotify"
+    if [[ $LINE == *"name"*"id_spotifox"* ]]; then
+        if [[ $(ps -A | grep -c 'spotify') -ge 1 ]]; then
+            wmctrl -x -R "Spotify"
+        else
+            wmctrl -x -R "Firefox"
+        fi
     fi
 
     if [[ $LINE == *"name"*"id_blue"* ]]; then
@@ -232,3 +246,4 @@ while read LINE; do
         gnome-terminal --hide-menubar --title=statusbar_popup -- bash -c "ncal -b -M -y; read -n 1; exit" &
     fi
 done
+
