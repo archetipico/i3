@@ -2,7 +2,6 @@
 OS: <code>Debian 11 (bullseye)</code> 
 <h2>Dependencies</h2>
 <ul>
-    <li><a href="https://github.com/ryanoasis/nerd-fonts/blob/master/patched-fonts/3270/Narrow/complete/3270%20Narrow%20Nerd%20Font%20Complete.ttf">3270 Narrow Nerd Font</a></li>
     <li>alsamixer</li>
     <li>compton</li>
     <li>curl</li>
