@@ -66,7 +66,7 @@ bindsym $mod+Shift+Right move right
 
 # bar and status
 bar {
-        font pango:3270Narrow Nerd Font 12
+        font pango:monospace 10
         status_command exec ~/.config/i3/i3status/bar.sh
 }
 
