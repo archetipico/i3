@@ -32,8 +32,8 @@ function get_spotifox () {
     cat ~/.config/i3/i3status/temp_audio_activity.log | cut -d '"' -f2- | rev | cut -c2- | rev | tail -3 > ~/.config/i3/i3status/res_audio_activity.log
 
     # if the first line is `xesam:title` then it's from Firefox, else from Spotify
-    local ARTIST=$(cat ~/.config/i3/i3status/res_audio_activity.log | head -1 | awk '{gsub(/"/,"");}1')
-    local SONG=$(cat ~/.config/i3/i3status/res_audio_activity.log | tail -1 | awk '{gsub(/"/,"");}1')
+    local ARTIST=$(cat ~/.config/i3/i3status/res_audio_activity.log | head -1 | sed 's/("|\\)/\\&/g')
+    local SONG=$(cat ~/.config/i3/i3status/res_audio_activity.log | tail -1 | sed 's/("|\\)/\\&/g')
     if [[ $ARTIST == 'xesam:title' ]]; then
         local VIDEO=$(cat ~/.config/i3/i3status/res_audio_activity.log | awk 'NR==2')
         echo -n "\"$(echo $VIDEO | awk '{gsub(/"/,"");}1')\","
