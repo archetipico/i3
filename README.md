@@ -8,9 +8,9 @@ OS: <code>Debian 11 (bullseye)</code>
     <li>Firefox</li>
     <li>gnome-terminal</li>
     <li>htop</li>
-    <li>i3wm</li>
     <li>i3bar</li>
     <li>i3lock</li>
+    <li>i3wm</li>
     <li>ncal</li>
     <li>nvtop</li>
     <li>speedtest-cli</li>

@@ -3,9 +3,10 @@
 # set $mod as WinKey
 set $mod Mod4
 
-# set two workspaces
+# set three workspaces
 set $ws1 "1"
 set $ws2 "2"
+set $ws3 "3"
 
 # used in PulseAudio controls
 set $refresh_i3status killall -SIGUSR1 i3status
@@ -35,13 +36,16 @@ bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOU
 # screenshot
 bindsym Print exec gnome-screenshot -i
 
-# run firefox
+# run Discord
+bindsym $mod+Ctrl+d exec flatpak run com.discordapp.Discord
+
+# run Firefox
 bindsym $mod+Ctrl+f exec ~/Documents/Firefox/firefox
 
-# run spotify
+# run Spotify
 bindsym $mod+Ctrl+s exec spotify
 
-# run telegram
+# run Telegram
 bindsym $mod+Ctrl+t exec flatpak run org.telegram.desktop
 
 
@@ -160,7 +164,9 @@ bindsym $mod+Shift+q kill
 # switch to workspace
 bindsym $mod+1 workspace number $ws1
 bindsym $mod+2 workspace number $ws2
+bindsym $mod+3 workspace number $ws3
 
 # move focused container to workspace
 bindsym $mod+Shift+1 move container to workspace number $ws1
 bindsym $mod+Shift+2 move container to workspace number $ws2
+bindsym $mod+Shift+3 move container to workspace number $ws3
